@@ -7,7 +7,9 @@ authors = [
     { name = "surtr", email = "pudi_258@qq.com" }
 ]
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "python-dotenv>=1.2.3",
+]
 
 [project.scripts]
 flask-demo = "flask_demo:main"
