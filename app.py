@@ -8,6 +8,7 @@ from pathlib import Path
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped,mapped_column
 import click
+from sqlalchemy import select
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + str(Path(app.root_path) / 'data.db')
@@ -65,7 +66,16 @@ def forge():
     db.session.commit()
     click.echo('Done.')
 
+@app.context_processor
+def inject_user():
+    user = db.session.execute(select(User)).scalar()
+    return dict(user=user)
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template('404.html'), 404
+
 @app.route('/')
 def index():
-    return render_template('index.html', name=name, movies=movies)
-    
+    movies = db.session.execute(select(Movie)).scalars().all()
+    return render_template('index.html', movies=movies)
